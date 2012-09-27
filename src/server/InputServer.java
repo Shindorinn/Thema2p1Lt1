@@ -1,15 +1,15 @@
 package server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class InputServer implements Runnable{
 	// The thread the server will run on
+	@SuppressWarnings("unused")
 	private Thread thread;
+	
 	private boolean running;
 	
 	
@@ -17,9 +17,10 @@ public class InputServer implements Runnable{
 	private Integer port;
 	// The object representing the socket where the server listens
 	private ServerSocket server;
-	// The object respresenting the socket where the client connects with
+	// The object representing the socket where the client connects with
 	private Socket client;
-	
+	// The list of connected Clients that are being handled
+	private ArrayList<ServerProtocol> clients;
 	
 	public InputServer(){
 		init();
@@ -47,14 +48,20 @@ public class InputServer implements Runnable{
 	
 	private void handleClient(Socket client){
         ServerProtocol protocol = new ServerProtocol(client);
+        clients.add(protocol);
 	}
 	
 	private void init() {
 		try {
+			// Initialize everything
 			port = 6100;
 			server = new ServerSocket(port);
 			client = null;
 			running = true;
+			clients = new ArrayList<ServerProtocol>();
+			//Finally add this object to a thread.
+			thread = new Thread(this);
+			
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: " + port + ".");
             System.exit(1);
