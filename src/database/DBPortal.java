@@ -1,5 +1,7 @@
 package database;
 import database.DBConnection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 public class DBPortal{
 	
 	private int stn;
@@ -59,10 +61,22 @@ public class DBPortal{
 								visib + "," + wdsp + "," + prcp + "," + sndp + "," + frshtt + ","
 								+ cldc + "," + wndir +")");
 			System.out.println("Data saved!");
-		} catch (Exception e){
+		} catch (SQLException e){
 			System.out.println("SQL statement could not be executed");
 			e.printStackTrace();
 		}
 	}
+	
+	public ResultSet getLastWeatherData(){
+		
+		try{
+			return db.runSQLQuery("");
+		} catch (SQLException e){
+			System.out.println("Er ging iets fout bij het ophalen van de gegevens");
+			e.printStackTrace();
+			return null;
+		}
+	}
+		
 	
 }

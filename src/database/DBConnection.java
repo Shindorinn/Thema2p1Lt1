@@ -15,13 +15,18 @@ public class DBConnection {
 		
 	public Connection getConnection() throws SQLException{			//Hoort private
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/unwdmi", "root", "");
-		System.out.println("DBConnection made, oh f**k yeah^^");
 		return conn;
 		
 	}
 	
-	public ResultSet runSQLQuery(String query){
-		return null;
+	public ResultSet runSQLQuery(String query) throws SQLException{
+		
+		Connection conn = getConnection();
+		Statement s = conn.createStatement();
+		ResultSet rs = s.executeQuery(query);
+		conn.close();
+		return rs;
+		
 	}
 	
 	public void runSQLStatement(String query) throws SQLException { 
