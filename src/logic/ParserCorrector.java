@@ -23,9 +23,7 @@ public class ParserCorrector implements Runnable{
 		this.input = input;
 		this.thread = new Thread(this);
 		this.builder = new SAXBuilder();
-		
-		this.db = new DBPortal(0, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		
+				
 		thread.start();
 	}
 
@@ -42,10 +40,10 @@ public class ParserCorrector implements Runnable{
 		try {
 			xmlDoc = builder.build(new StringReader(input.toString()));
 		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
+			System.err.println("ParserCorrector : JDOMException.");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("ParserCorrector : IOException.");
 			e.printStackTrace();
 		}
 	}
@@ -54,12 +52,17 @@ public class ParserCorrector implements Runnable{
 	private void correct() {
 		// TODO Auto-generated method stub
 		System.out.println("ParserCorrector : Correcting.");
+		
+		
 	}
 	
 
 	private void save() {
 		// TODO Auto-generated method stub
 		System.out.println("ParserCorrector : Saving.");
+		
+
+		//this.db = new DBPortal(0, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 
