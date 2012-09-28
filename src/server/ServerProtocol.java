@@ -6,10 +6,14 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ServerProtocol {
+public class ServerProtocol implements Runnable{
 
+	private Socket client;
+	private boolean running;
+	
 	public ServerProtocol(Socket client){
-		handleClient(client);
+		running = true;
+		this.client = client;
 	}
 	
 	private void handleClient(Socket client){
@@ -45,6 +49,13 @@ public class ServerProtocol {
 	        
 		}catch(IOException ioex){
 			ioex.printStackTrace();
+		}
+	}
+
+	@Override
+	public void run() {
+		while(running){
+			handleClient(client);
 		}
 	}
 }
