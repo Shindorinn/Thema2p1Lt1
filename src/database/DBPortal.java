@@ -2,6 +2,7 @@ package database;
 import database.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 public class DBPortal{
 	
 	private int stn;
@@ -52,16 +53,32 @@ public class DBPortal{
 		
 	}
 	
-	public synchronized void saveWeatherData(){
+	public DBPortal(){
 		
 		try{
+			db = new DBConnection();
+			System.out.println("Succesful connection with the database");
+		} catch (Exception e){
+			System.out.println("Could not make a connection with the database!");
+			e.printStackTrace();
+		}
+		
+		System.out.println("DBPortal created");
+	}
+	
+	public synchronized void saveWeatherData(){
+		
+		/*String timeArray[];
+		timeArray = time.split(":");*/
+		try{
 			System.out.println("Trying to save data!");
-			db.runSQLStatement("INSERT INTO measurement VALUES (" + stn + ",'" + date + "','" + 
+			db.runSQLStatement
+			("INSERT INTO measurement VALUES (" + stn + ",'" + date + "','" + 
 								time + "'," + temp + ","  + dewp + "," + stp + "," + slp + "," + 
 								visib + "," + wdsp + "," + prcp + "," + sndp + "," + frshtt + ","
 								+ cldc + "," + wndir +")");
 			System.out.println("Data saved!");
-		} catch (SQLException e){
+		} catch (Exception e){
 			System.out.println("SQL statement could not be executed");
 			e.printStackTrace();
 		}

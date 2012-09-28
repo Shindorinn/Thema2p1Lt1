@@ -11,7 +11,7 @@ public class MainArjan {
 	 */
 	public static void main(String[] args) {
 		
-		DBPortal dbp = new DBPortal(10010, "Date", "Time", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, (byte)0, 0.0f, (short) 0);
+		DBPortal dbp = new DBPortal(10010, "Date", "15:45:30", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, (byte)0, 0.0f, (short) 0);
 		dbp.saveWeatherData();
 		
 	}
