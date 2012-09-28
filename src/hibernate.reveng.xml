@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+
+
+
+
+	<table-filter match-schema="unwdmi" match-name=".*" />
+	<table catalog="unwdmi" name="station">
+		<column name="stn"></column>
+		<column name="name"></column>
+		<column name="latitude"></column>
+		<column name="longitude"></column>
+		<column name="country"></column>
+		<column name="timezone"></column>
+	</table>
+	<table catalog="unwdmi" name="measurement">
+		<column name="stn"></column>
+		<column name="date"></column>
+		<column name="time"></column>
+		<column name="temp"></column>
+		<column name="dewp"></column>
+		<column name="stp"></column>
+		<column name="slp"></column>
+		<column name="visib"></column>
+		<column name="wdsp"></column>
+		<column name="prcp"></column>
+		<column name="sndp"></column>
+		<column name="frshtt"></column>
+		<column name="cldc"></column>
+		<column name="wnddir"></column>
+	</table>
+	<table catalog="unwdmi" name="timezone">
+		<column name="timezone_id"></column>
+		<column name="gmt_offset"></column>
+		<column name="dst"></column>
+	</table>
+</hibernate-reverse-engineering>
