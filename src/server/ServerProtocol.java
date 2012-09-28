@@ -6,14 +6,19 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import logic.ParserCorrector;
+
 public class ServerProtocol implements Runnable{
 
 	private Socket client;
 	private boolean running;
+	private Thread thread;
 	
 	public ServerProtocol(Socket client){
 		running = true;
 		this.client = client;
+		this.thread = new Thread(this);
+		thread.start();
 	}
 	
 	private void handleClient(Socket client){
@@ -27,18 +32,17 @@ public class ServerProtocol implements Runnable{
 	        // The variables containing the information received from the Client        
 	        StringBuffer fromClient = new StringBuffer();
 	        String input;
-	        // The variable containing the information to be returned to the Client
-	        String toClient;
 	        	 
 			while ((input = in.readLine()) != null) {
-				 System.out.println("Processing request from client");
+				 System.out.println("input : |" + input);
 				 
 				 fromClient.append(input);
+				 if(input.equals("</WEATHERDATA>")){
+					 new ParserCorrector(fromClient);
+					 fromClient = new StringBuffer();
+				 }
+				 
 				 input = null;
-			    /*
-				 toClient = protocol.processInput(fromClient);
-			     out.writeObject(toClient);
-			     */
 			}
 			
 			System.out.println(fromClient.toString());
