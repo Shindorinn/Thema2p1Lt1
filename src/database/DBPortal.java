@@ -50,16 +50,14 @@ public class DBPortal{
 		
 	}
 	
-	public synchronized void saveWeatherData(int stn, String date, String time, float temp, float dewp, 
-								float stp, float slp, float visib, float wdsp, float prcp, 
-										float sndp, byte frshtt, float cldc, short wndir){
+	public synchronized void saveWeatherData(){
 		
 		try{
 			System.out.println("Trying to save data!");
-			db.runSQLStatement("INSERT INTO 'measurement' VALUES(" + stn + ",'" + date + "','" + 
+			db.runSQLStatement("INSERT INTO measurement VALUES (" + stn + ",'" + date + "','" + 
 								time + "'," + temp + ","  + dewp + "," + stp + "," + slp + "," + 
 								visib + "," + wdsp + "," + prcp + "," + sndp + "," + frshtt + ","
-								+ cldc + "," + wndir);
+								+ cldc + "," + wndir +")");
 			System.out.println("Data saved!");
 		} catch (Exception e){
 			System.out.println("SQL statement could not be executed");

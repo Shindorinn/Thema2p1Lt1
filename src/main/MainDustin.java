@@ -3,7 +3,7 @@ import java.rmi.server.ServerCloneException;
 import server.InputServer;
 
 
-public class Main {
+public class MainDustin {
 
 	/**
 	 * @param args
