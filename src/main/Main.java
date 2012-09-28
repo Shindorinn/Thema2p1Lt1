@@ -10,13 +10,6 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		try{
-			DBConnection db = new DBConnection();
-			db.getConnection();
-		} catch( Exception e){
-			
-		}
-		
 		InputServer server = new InputServer();
 		while(true);
 		// TODO Auto-generated method stub
