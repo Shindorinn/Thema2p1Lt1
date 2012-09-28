@@ -23,14 +23,19 @@ public class InputServer implements Runnable{
 	private ArrayList<ServerProtocol> clients;
 	
 	public InputServer(){
+		System.out.println("Creating Server");
 		init();
+		System.out.println("Done creating server");
 	}
 
 	@Override
 	public void run() {
+		System.out.println("Server : Starting run cycle");
 		while(running){
+			System.out.println("Server : Running!");
 			listen();
 		}
+		System.out.println("Server : Stopped running");
 	}
 	
 	private void listen(){
@@ -54,13 +59,14 @@ public class InputServer implements Runnable{
 	private void init() {
 		try {
 			// Initialize everything
-			port = 6100;
+			port = 7789;
 			server = new ServerSocket(port);
 			client = null;
 			running = true;
 			clients = new ArrayList<ServerProtocol>();
 			//Finally add this object to a thread.
 			thread = new Thread(this);
+			thread.start();
 			
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: " + port + ".");

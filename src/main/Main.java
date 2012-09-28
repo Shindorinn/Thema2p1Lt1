@@ -1,13 +1,17 @@
 package main;
 
+import java.rmi.server.ServerCloneException;
+
+import server.InputServer;
+
 public class Main {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		InputServer server = new InputServer();
+		while(true);
 	}
 
 }

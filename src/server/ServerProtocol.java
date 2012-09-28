@@ -37,6 +37,7 @@ public class ServerProtocol {
 			     */
 			}
 			
+			System.out.println(fromClient.toString());
 			// End the connection
 			out.close();
 	        in.close();
