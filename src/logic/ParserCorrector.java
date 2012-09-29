@@ -63,7 +63,7 @@ public class ParserCorrector implements Runnable{
 		List<Element> measurements = weatherData.getChildren();
 		List<Element> elements = measurements.get(1).getChildren();
 		System.out.println(elements.size());
-		System.out.println(elements.get(0).getName());
+		System.out.println(elements.get(0).getValue());
 		
 		
 		/*
