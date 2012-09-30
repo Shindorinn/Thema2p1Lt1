@@ -84,14 +84,19 @@ public class DBPortal{
 		}
 	}
 	
-	public ResultSet getLastWeatherData(){
+	public void getLastWeatherData(int stn, String time){
 		
 		try{
-			return db.runSQLQuery("");
-		} catch (SQLException e){
+			System.out.println("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");
+			
+			db.runSQLQuery("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");
+			
+			//return db.runSQLQuery("SELECT * FROM measurement WHERE stn = " + stn + " AND time BETWEEN '" + time + "' AND SUBTIME('" + time + "','00:00:30')");
+			
+		} catch (Exception e){
 			System.out.println("Er ging iets fout bij het ophalen van de gegevens");
 			e.printStackTrace();
-			return null;
+			
 		}
 	}
 		
