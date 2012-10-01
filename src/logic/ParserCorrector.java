@@ -8,6 +8,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
 import database.DBPortal;
@@ -51,19 +52,61 @@ public class ParserCorrector implements Runnable{
 		}
 	}
 	
+	/**
+	 * Casustekst :
+	 * 
+	 * Indien één of meer meetwaarden ontbreken, worden ze door het systeem berekend door middel van extrapolatie van de dertig voorafgaande metingen. 
+	 * Dit komt ongeveer in 1% van alle gevallen voor.
+	 * 
+	 * Een meetwaarde voor de temperatuur wordt als irreëel beschouwd indien
+	 * ze 20% of meer groter is of kleiner is dan wat men kan verwachten op basis van extrapolatie van de dertig voorafgaande temperatuurmetingen. 
+	 * 
+	 * In dat geval wordt de geëxtrapoleerde waarde ± 20% voor de temperatuur opgeslagen. 
+	 * Voor de andere meetwaarden wordt deze handelswijze niet toegepast.
+	 * 
+	 */
 
 	private void correct() {
 		// TODO Auto-generated method stub
 		System.out.println("ParserCorrector : Correcting.");
 		
-		Element weatherData = xmlDoc.getRootElement();
+		// De nodige diepte
+		//System.out.println(weatherData.getChildren().get(0).getChildren().get(0).getName()); <-- STN
 		
+		/*
+		String s = elements.get(0).getValue();
+	
+		System.out.println(s);
+		*/
+		
+		
+		Element weatherData = xmlDoc.getRootElement();
+				
 		System.out.println(weatherData.getName());
 		
 		List<Element> measurements = weatherData.getChildren();
+		
+		// Start van for-loop
 		List<Element> elements = measurements.get(1).getChildren();
-		System.out.println(elements.size());
-		System.out.println(elements.get(0).getValue());
+		
+		for(Element measurement : measurements){
+			System.out.println("Name : " + measurement.getName());
+			System.out.println("Value :" + measurement.getValue());
+			
+			System.out.println("Stn : " + measurement.getAttributeValue("STN"));
+			System.out.println("Date : " + measurement.getAttributeValue("date"));
+			System.out.println("Time : " + measurement.getAttributeValue("time"));
+			System.out.println("Temp : " + measurement.getAttributeValue("temp"));
+			System.out.println("Dewp : " + measurement.getAttributeValue("dewp"));
+			System.out.println("Stp : " + measurement.getAttributeValue("stp"));
+			System.out.println("Visib : " + measurement.getAttributeValue("visib"));
+			System.out.println("Wdsp : " + measurement.getAttributeValue("wdsp"));
+			System.out.println("Prcp : " + measurement.getAttributeValue("prcp"));
+			System.out.println("Sndp : " + measurement.getAttributeValue("sndp"));
+			System.out.println("Frshtt : " + measurement.getAttributeValue("frshtt"));
+			System.out.println("Cldc : " + measurement.getAttributeValue("cldc"));
+			System.out.println("Wnddir : " + measurement.getAttributeValue("wnddir"));
+		}
 		
 		
 		/*
