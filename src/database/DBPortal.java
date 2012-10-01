@@ -23,9 +23,7 @@ public class DBPortal{
 	
 	private DBConnection db;
 	
-	public DBPortal(int stn, String date, String time, float temp, float dewp, 
-					float stp, float slp, float visib, float wdsp, float prcp, 
-								float sndp, byte frshtt, float cldc, short wnddir){
+	public DBPortal(Measurement mes){
 		
 		try{
 			db = new DBConnection();
@@ -35,20 +33,20 @@ public class DBPortal{
 			e.printStackTrace();
 		}
 		
-		this.stn= stn;
-		this.date= date;
-		this.time= time;
-		this.temp= temp;
-		this.dewp= dewp;
-		this.stp= stp;
-		this.slp= slp;
-		this.visib= visib;
-		this.wdsp= wdsp;
-		this.prcp= prcp;
-		this.sndp= sndp;
-		this.frshtt= frshtt;
-		this.cldc= cldc;
-		this.wnddir= wnddir;
+		this.stn= mes.getStn();
+		this.date= mes.getDate();
+		this.time= mes.getTime();
+		this.temp= mes.getTemp();
+		this.dewp= mes.getDewp();
+		this.stp= mes.getStp();
+		this.slp= mes.getSlp();
+		this.visib= mes.getVisib();
+		this.wdsp= mes.getWdsp();
+		this.prcp= mes.getPrcp();
+		this.sndp= mes.getSndp();
+		this.frshtt= mes.getFrshtt();
+		this.cldc= mes.getCldc();
+		this.wnddir= mes.getWnddir();
 		
 		System.out.println("DBPortal created");
 		
