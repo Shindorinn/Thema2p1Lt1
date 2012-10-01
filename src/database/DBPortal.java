@@ -3,6 +3,7 @@ import database.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import domain.Measurement;
 public class DBPortal{
 	
 	private int stn;
@@ -18,13 +19,13 @@ public class DBPortal{
 	private float sndp;
 	private byte frshtt;
 	private float cldc;
-	private short wndir;
+	private short wnddir;
 	
 	private DBConnection db;
 	
 	public DBPortal(int stn, String date, String time, float temp, float dewp, 
 					float stp, float slp, float visib, float wdsp, float prcp, 
-								float sndp, byte frshtt, float cldc, short wndir){
+								float sndp, byte frshtt, float cldc, short wnddir){
 		
 		try{
 			db = new DBConnection();
@@ -47,7 +48,7 @@ public class DBPortal{
 		this.sndp= sndp;
 		this.frshtt= frshtt;
 		this.cldc= cldc;
-		this.wndir= wndir;
+		this.wnddir= wnddir;
 		
 		System.out.println("DBPortal created");
 		
@@ -76,7 +77,7 @@ public class DBPortal{
 			("INSERT INTO measurement VALUES (" + stn + ",'" + date + "','" + 
 								time + "'," + temp + ","  + dewp + "," + stp + "," + slp + "," + 
 								visib + "," + wdsp + "," + prcp + "," + sndp + "," + frshtt + ","
-								+ cldc + "," + wndir +")");
+								+ cldc + "," + wnddir +")");
 			System.out.println("Data saved!");
 		} catch (Exception e){
 			System.out.println("SQL statement could not be executed");
@@ -84,19 +85,17 @@ public class DBPortal{
 		}
 	}
 	
-	public void getLastWeatherData(int stn, String time){
+	public synchronized ArrayList getLastWeatherData(int stn, String time){
 		
 		try{
-			System.out.println("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");
 			
-			db.runSQLQuery("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");
-			
-			//return db.runSQLQuery("SELECT * FROM measurement WHERE stn = " + stn + " AND time BETWEEN '" + time + "' AND SUBTIME('" + time + "','00:00:30')");
-			
+			System.out.println("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");	
+			return db.runSQLQuery("SELECT * FROM measurement WHERE stn = (" + stn + ") AND (time BETWEEN CAST(SUBTIME('" + time + "','00:00:30') AS time) AND CAST('" + time + "' AS time))");
+		
 		} catch (Exception e){
 			System.out.println("Er ging iets fout bij het ophalen van de gegevens");
 			e.printStackTrace();
-			
+			return null;	
 		}
 	}
 		

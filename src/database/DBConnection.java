@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import domain.Measurement;
+
 
 public class DBConnection {
 	
@@ -20,9 +22,9 @@ public class DBConnection {
 		
 	}
 	
-	public ArrayList runSQLQuery(String query) throws SQLException{
+	protected ArrayList runSQLQuery(String query) throws SQLException{
 		
-		ArrayList ar = new ArrayList();
+		ArrayList<Measurement> ar = new ArrayList();
 		Connection conn = getConnection();
 		Statement s = conn.createStatement();
 		ResultSet rs = s.executeQuery(query);
@@ -44,15 +46,19 @@ public class DBConnection {
             byte frshtt = rs.getByte("frshtt");
             float cldc = rs.getInt("cldc");
             short wnddir = rs.getShort("wnddir");
-            System.out.println("Adding results to list");
+            ar.add(new Measurement(stn, date, time, temp, dewp, 
+					stp, slp, visib, wdsp, prcp, 
+					sndp, frshtt, cldc, wnddir));
+            System.out.println("Added result to list");
 		}
 		rs.close();
 		conn.close();
+		System.out.println("Result list ready");
 		return ar;
 		
 	}
 	
-	public void runSQLStatement(String query) throws SQLException { 
+	protected void runSQLStatement(String query) throws SQLException { 
 		
 		Connection conn = getConnection();
 		Statement s = conn.createStatement();
