@@ -34,7 +34,7 @@ public class ServerProtocol implements Runnable{
 	        String input;
 	        	 
 			while ((input = in.readLine()) != null) {
-				 System.out.println("input : |" + input);
+				// System.out.println("input : |" + input);
 				 
 				 fromClient.append(input);
 				 if(input.equals("</WEATHERDATA>")){
