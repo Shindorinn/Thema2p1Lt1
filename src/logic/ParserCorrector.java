@@ -66,7 +66,6 @@ public class ParserCorrector implements Runnable{
 	 */
 
 	private void correct() {
-		// TODO Auto-generated method stub
 		System.out.println("ParserCorrector : Correcting.");
 		
 		// De nodige diepte
@@ -137,11 +136,21 @@ public class ParserCorrector implements Runnable{
 			if(e.getName().equals("PRCP")){
 				prcp = new Float(e.getValue()).floatValue();
 			}
-			if(e.getName().equals("FRSHTT")){
+			if(e.getName().equals("SNDP")){
 				sndp = new Float(e.getValue()).floatValue();
 			}
+			if(e.getName().equals("FRSHTT")){
+				// To parse the string into a byte,
+				// apparently i have to first convert it into a int value
+				// to the convert that into a byte... Strange
+				
+				String tempFrshtt = e.getValue();
+				
+				
+				frshtt = Byte.parseByte( tempFrshtt, 2 );
+			}
 			if(e.getName().equals("CLDC")){
-				frshtt = new Byte(e.getValue()).byteValue();
+				cldc = new Float(e.getValue()).floatValue();
 			}
 			if(e.getName().equals("WNDDIR")){
 				wnddir = new Short(e.getValue()).shortValue();
@@ -149,53 +158,14 @@ public class ParserCorrector implements Runnable{
 		}
 		
 		this.measurement = new Measurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
-		
-		
-		/*
-		for(Element measurement : weatherData.getChildren()){
-			List<Attribute> l = measurement.getAttributes();
-			for(Attribute a : l){
-				System.out.println(a.getName());
-			}*/
-			/*
-			System.out.println("Stn : " + measurement.getAttributeValue("STN"));
-			System.out.println("Date : " + measurement.getAttributeValue("date"));
-			System.out.println("Time : " + measurement.getAttributeValue("time"));
-			System.out.println("Temp : " + measurement.getAttributeValue("temp"));
-			System.out.println("Dewp : " + measurement.getAttributeValue("dewp"));
-			System.out.println("Stp : " + measurement.getAttributeValue("stp"));
-			System.out.println("Visib : " + measurement.getAttributeValue("visib"));
-			System.out.println("Wdsp : " + measurement.getAttributeValue("wdsp"));
-			System.out.println("Prcp : " + measurement.getAttributeValue("prcp"));
-			System.out.println("Sndp : " + measurement.getAttributeValue("sndp"));
-			System.out.println("Frshtt : " + measurement.getAttributeValue("frshtt"));
-			System.out.println("Cldc : " + measurement.getAttributeValue("cldc"));
-			System.out.println("Wnddir : " + measurement.getAttributeValue("wnddir"));
-			*/
 			
-		}
-		/*
-		Element root = antbuild.getRootElement();
-		String deftarget = root.getAttributeValue("default", "all");
-		for (Element target : root.getChildren("target")) {
-    		if (deftarget.equals(element.getAttributeValue("name"))) {
-        		System.out.println("The default target " + deftarget + 
-                " has dependencies " + target.getAttributeValue("depends"));
-    		}
-		}
-		 
-		
-	}*/
-	
-	
+	}
 
 	private void save() {
 		// TODO Auto-generated method stub
 		System.out.println("ParserCorrector : Saving.");
 		
 		new DBPortal(measurement).saveWeatherData();
-		
-		//this.db = new DBPortal(0, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 
