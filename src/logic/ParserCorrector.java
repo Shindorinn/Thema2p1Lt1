@@ -2,6 +2,7 @@ package logic;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -20,12 +21,15 @@ public class ParserCorrector implements Runnable{
 	private Document xmlDoc;
 	private SAXBuilder builder;
 	
-	private Measurement measurement;
+	private ArrayList<Measurement> measurements;
+	private DBPortal db;
 	
 	public ParserCorrector(StringBuffer input){
 		this.input = input;
 		this.thread = new Thread(this);
 		this.builder = new SAXBuilder();
+		this.measurements = new ArrayList<Measurement>();
+		this.db = new DBPortal();
 				
 		thread.start();
 	}
@@ -49,6 +53,87 @@ public class ParserCorrector implements Runnable{
 			System.err.println("ParserCorrector : IOException.");
 			e.printStackTrace();
 		}
+		Element weatherData = xmlDoc.getRootElement();
+		
+		System.out.println(weatherData.getName());
+		
+		List<Element> measurements = weatherData.getChildren();
+		
+		
+		
+		// Start van for-loop
+		for(int i = 0; i < measurements.size() ; i++ ) {
+		
+			List<Element> elements = measurements.get(i).getChildren();
+			
+			int stn = 0;
+			String date = "";
+			String time = "";
+			float temp = Float.MIN_VALUE;
+			float dewp = Float.MIN_VALUE;
+			float stp = Float.MIN_VALUE;
+			float slp = Float.MIN_VALUE;
+			float visib = Float.MIN_VALUE;
+			float wdsp = Float.MIN_VALUE;
+			float prcp = Float.MIN_VALUE;
+			float sndp = Float.MIN_VALUE;
+			byte frshtt = Byte.MIN_VALUE;
+			float cldc = Float.MIN_VALUE;
+			short wnddir = Short.MIN_VALUE;
+			
+			for(Element e : elements){
+				System.out.println("Name : " + e.getName());
+				System.out.println("Value :" + e.getValue());
+				
+				if(!e.getValue().equals("")){
+					if(e.getName().equals("STN")){
+						stn = new Integer(e.getValue()).intValue();
+					}
+					if(e.getName().equals("DATE")){
+						date = e.getValue();
+					}
+					if(e.getName().equals("TIME")){
+						time = e.getValue();
+					}
+					if(e.getName().equals("TEMP")){
+						temp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("DEWP")){
+						dewp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("STP")){
+						stp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("SLP")){
+						slp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("VISIB")){
+						visib = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("WDSP")){
+						wdsp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("PRCP")){
+						prcp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("SNDP")){
+						sndp = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("FRSHTT")){
+						String tempFrshtt = e.getValue();
+						frshtt = Byte.parseByte( tempFrshtt, 2 );
+					}
+					if(e.getName().equals("CLDC")){
+						cldc = new Float(e.getValue()).floatValue();
+					}
+					if(e.getName().equals("WNDDIR")){
+						wnddir = new Short(e.getValue()).shortValue();
+					}
+				}
+			}
+			
+			this.measurements.add( new Measurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir));
+		}	
 	}
 	
 	/**
@@ -68,28 +153,27 @@ public class ParserCorrector implements Runnable{
 	private void correct() {
 		System.out.println("ParserCorrector : Correcting.");
 		
-		// De nodige diepte
-		//System.out.println(weatherData.getChildren().get(0).getChildren().get(0).getName()); <-- STN
+		for(Measurement m: measurements){
+			ArrayList<Measurement> fromDB = this.db.getLastWeatherData(m.getStn(), m.getTime());
+			if(!fromDB.isEmpty()){
+				Measurement extrapolation = this.extrapolate(fromDB);
+				checkMeasurement(m, extrapolation);
+			} else {
+				System.out.println("Pumping raw data!!");
+			}
+		}
+	}
+
+	private void save() {
+		System.out.println("ParserCorrector : Saving.");
 		
-		/*
-		String s = elements.get(0).getValue();
-	
-		System.out.println(s);
-		*/
+		for(Measurement m : measurements){
+			this.db.saveWeatherData(m);
+		}
+	}
+
+	private Measurement extrapolate(ArrayList<Measurement> fromDB){
 		
-		
-		Element weatherData = xmlDoc.getRootElement();
-				
-		System.out.println(weatherData.getName());
-		
-		List<Element> measurements = weatherData.getChildren();
-		
-		// Start van for-loop
-		List<Element> elements = measurements.get(1).getChildren();
-		
-		int stn = 0;
-		String date = "";
-		String time = "";
 		float temp = 0;
 		float dewp = 0;
 		float stp = 0;
@@ -98,76 +182,89 @@ public class ParserCorrector implements Runnable{
 		float wdsp = 0;
 		float prcp = 0;
 		float sndp = 0;
-		byte frshtt = 0;
 		float cldc = 0;
 		short wnddir = 0;
 		
-		for(Element e : elements){
-			System.out.println("Name : " + e.getName());
-			System.out.println("Value :" + e.getValue());
-
-			if(e.getName().equals("STN")){
-				stn = new Integer(e.getValue()).intValue();
-			}
-			if(e.getName().equals("DATE")){
-				date = e.getValue();
-			}
-			if(e.getName().equals("TIME")){
-				time = e.getValue();
-			}
-			if(e.getName().equals("TEMP")){
-				temp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("DEWP")){
-				dewp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("STP")){
-				stp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("SLP")){
-				slp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("VISIB")){
-				visib = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("WDSP")){
-				wdsp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("PRCP")){
-				prcp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("SNDP")){
-				sndp = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("FRSHTT")){
-				// To parse the string into a byte,
-				// apparently i have to first convert it into a int value
-				// to the convert that into a byte... Strange
-				
-				String tempFrshtt = e.getValue();
-				
-				
-				frshtt = Byte.parseByte( tempFrshtt, 2 );
-			}
-			if(e.getName().equals("CLDC")){
-				cldc = new Float(e.getValue()).floatValue();
-			}
-			if(e.getName().equals("WNDDIR")){
-				wnddir = new Short(e.getValue()).shortValue();
-			}
+		for(int i = 0; i < fromDB.size() - 1 ; i++ ){
+			Measurement first = fromDB.get(i);
+			Measurement second = fromDB.get(i + 1);
+			
+			temp += second.getTemp() - first.getTemp();
+			dewp += second.getDewp() - first.getDewp();
+			stp += second.getStp() - first.getStp();
+			slp += second.getSlp() - first.getSlp();
+			visib += second.getVisib() - first.getVisib();
+			wdsp += second.getWdsp() - first.getWdsp();
+			prcp += second.getPrcp() - first.getPrcp();
+			sndp += second.getSndp() - first.getSndp();
+			cldc += second.getCldc() - first.getCldc();
+			wnddir += second.getWnddir() - first.getWnddir();
 		}
 		
-		this.measurement = new Measurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
+		int n = fromDB.size() -1;
+		if(n !=0 ){
+			temp = fromDB.get(0).getTemp() + temp/n;
+			dewp = fromDB.get(0).getTemp() + dewp/n;
+			stp = fromDB.get(0).getStp() + stp/n;
+			slp = fromDB.get(0).getSlp() + slp/n;
+			visib = fromDB.get(0).getVisib() + visib/n;
+			wdsp = fromDB.get(0).getWdsp() + wdsp/n;
+			prcp = fromDB.get(0).getPrcp() + prcp/n;
+			sndp = fromDB.get(0).getSndp() + sndp/n;
+			cldc = fromDB.get(0).getCldc() + cldc/n;
+			wnddir = (short) (fromDB.get(0).getWnddir() + wnddir/n);
 			
+			return new Measurement(-1, null, null, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, (byte) 0, cldc, wnddir);
+		} else {
+			return fromDB.get(0);
+		}
 	}
 
-	private void save() {
-		// TODO Auto-generated method stub
-		System.out.println("ParserCorrector : Saving.");
+
+	private Measurement checkMeasurement(Measurement toCheck, Measurement fromDB){
 		
-		new DBPortal(measurement).saveWeatherData();
+		// Checking if the temperature is present and whether this is plausible, else change it.
+		if(toCheck.getTemp() == Float.MIN_VALUE){
+			toCheck.setTemp(fromDB.getTemp());
+		} else if (toCheck.getTemp() < 0.8f * fromDB.getTemp()){ // Is the value too low?
+			toCheck.setTemp(0.8f * fromDB.getTemp()); 
+		} else if (toCheck.getTemp() > 1.2f * fromDB.getTemp()){ // Is the value too high?
+			toCheck.setTemp(1.2f * fromDB.getTemp());
+		}
+		
+		
+		// Checking if the other values are present
+		if(toCheck.getDewp() == Float.MIN_VALUE){
+			toCheck.setDewp(fromDB.getDewp());
+		}
+		if(toCheck.getStp() == Float.MIN_VALUE){
+			toCheck.setStp(fromDB.getStp());
+		}
+		if(toCheck.getSlp() == Float.MIN_VALUE){
+			toCheck.setSlp(fromDB.getSlp());
+		}
+		if(toCheck.getVisib() == Float.MIN_VALUE){
+			toCheck.setVisib(fromDB.getVisib());
+		}
+		if(toCheck.getWdsp() == Float.MIN_VALUE){
+			toCheck.setWdsp(fromDB.getWdsp());
+		}
+		if(toCheck.getPrcp() == Float.MIN_VALUE){
+			toCheck.setPrcp(fromDB.getPrcp());
+		}
+		if(toCheck.getSndp() == Float.MIN_VALUE){
+			toCheck.setSndp(fromDB.getSndp());
+		}
+		if(toCheck.getFrshtt() == Byte.MIN_VALUE){
+			toCheck.setFrshtt(fromDB.getFrshtt());
+		}
+		if(toCheck.getCldc() == Float.MIN_VALUE){
+			toCheck.setCldc(fromDB.getCldc());
+		}
+		if(toCheck.getWnddir() == Float.MIN_VALUE){
+			toCheck.setWnddir(fromDB.getWnddir());
+		}
+		
+		return toCheck;
 	}
-
-
-
 }
